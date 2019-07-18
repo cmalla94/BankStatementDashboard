@@ -19,7 +19,7 @@ numpy==1.16.4
 pandas==0.24.2
 pikepdf==1.5.0.post0
 plotly==4.0.0
-python-dateutil==1.5
+python-dateutil==2.5.0
 pytz==2019.1
 PyYAML==5.1.1
 requests==2.22.0
