@@ -1,2 +1,6 @@
 Secured_Statements/*
 Unsecured_Statements/*
+venv
+*.pyc
+.DS_Store
+.env
