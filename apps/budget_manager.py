@@ -210,7 +210,6 @@ layout = [
                 }
             ],
             data=df.to_dict('records'),
-            sorting=True,
             style_cell={
                 'minWidth': '0px',
                 'maxWidth': '120px',
