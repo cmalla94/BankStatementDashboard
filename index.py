@@ -1,7 +1,8 @@
 # the index file of the application where the app navigates from
 # For debuggin and tracking errors
 import sentry_sdk
-sentry_sdk.init("https://90dd8cb534ad4e5e9a2f25dc27cc18fd@sentry.io/1508448")
+sentry_sdk.init("https://42401d97fc2d4204a4c122e13f8b5512@sentry.io/1508456")
+
 
 # test 
 # div_by_zero = 1 / 0
