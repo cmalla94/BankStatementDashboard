@@ -16,3 +16,9 @@ The goal is have an interactive finance dashboard that helps me achieve my finan
 ## Milestone 2 -- In progress
 
 -More analytics to added to historical tab & budget manager. Add budget target widget, being able to upload a bank statement and have the program scrape and add the transactions (eliminating any duplicates) or looking into recently discovered RBC API to get my transactions 
+
+--Update: RBC API requires me to have a company associated with the application, I will just keep using my personalized scraper but will make changes to make it more automated
+
+-Added Sentry which emails me whenever my app breaks and just really useful for debugging
+-Added new plots to the Budget Manager and made changes to color scheme
+
