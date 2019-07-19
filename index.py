@@ -18,6 +18,8 @@ from dash.dependencies import Input, Output
 from apps import budget_manager, hist_trans_tab
 from app import app
 
+app.title = 'Finance Analyzer'
+
 app.layout = html.Div([
     dcc.Tabs( 
         id='tabs',

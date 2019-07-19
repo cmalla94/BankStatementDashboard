@@ -10,6 +10,8 @@ from dash.dependencies import Input, Output, State
 import pandas as pd
 import dash_table as dtbl
 import dash_table.FormatTemplate as FormatTemplate
+import plotly_express as px
+import calendar
 
 
 # import the app
@@ -27,6 +29,20 @@ today = dt.date.today()
 
 # read data
 df = pd.read_csv('transactions.csv')
+df['Date'] = pd.to_datetime(df.Date, infer_datetime_format=True) # convert to datetime or sorting doesn't work
+
+# get the day of the week
+dates = df.Date 
+# function to first get the numeric representation of the weekday then convert to english
+def get_weekday(x):
+    num = x.weekday()
+    return calendar.day_name[num]
+# apply get_weekday() to dates
+df['Weekday'] = dates.apply(get_weekday) 
+tmp = df[df.amount < 100]
+
+
+
 
 # add new transactions modal
 def modal():
@@ -182,87 +198,100 @@ layout = [
         style={"marginBottom": "10"},
     ),
     modal(),
-    html.Div( 
-        dtbl.DataTable(
-            id='trans-df',
-            columns=[
-                {
-                    'id': 'amount',
-                    'name': 'Price ($)',
-                    'type': 'numeric',
-                    'format': FormatTemplate.money(2)
-                },
-                {
-                    'id': 'Date', 
-                    'name': 'Date'
-                },
-                {
-                    'id': 'Place',
-                    'name': 'Place'
-                },
-                {
-                    'id': 'City',
-                    'name': 'City'
-                },
-                {
-                    'id': 'Category',
-                    'name': 'Category'
-                }
-            ],
-            data=df.to_dict('records'),
-            style_cell={
-                'minWidth': '0px',
-                'maxWidth': '120px',
-                'whitespace': 'normal',
-            },
-            style_table={
-                'height': '300px',
-                'overflowX': 'scroll',
-                'border': 'thin lightgrey solid',
-                'backgroundColor': '#EDECDE'
-            },
-            n_fixed_rows=1,
-            style_as_list_view=True,
-            style_cell_conditional = [
-                {
-                    'if': {'column_id': i},
-                    'textAlign': 'left'
-                } for i in ['Date', 'amount', 'Place']
-            ] + 
-            [
-                {
-                    'if': {
-                            'column_id': 'amount',
+    html.Div(
+        [
+            html.Div(
+                dtbl.DataTable(
+                    id='trans-df',
+                    columns=[
+                        {
+                            'id': 'amount',
+                            'name': 'Price ($)',
+                            'type': 'numeric',
+                            'format': FormatTemplate.money(2)
                         },
-                    'backgroundColor': '#EF5939',
-                    'width': '80px'
-                }
-            ] +
-            [
-                {
-                    'if': {
-                        'column_id': 'Date',
+                        {
+                            'id': 'Date', 
+                            'name': 'Date'
+                        },
+                        {
+                            'id': 'Place',
+                            'name': 'Place'
+                        },
+                        {
+                            'id': 'City',
+                            'name': 'City'
+                        },
+                        {
+                            'id': 'Category',
+                            'name': 'Category'
+                        }
+                    ],
+                    data=df.to_dict('records'),
+                    sorting=True,
+                    style_cell={
+                        'minWidth': '0px',
+                        'maxWidth': '120px',
+                        'whitespace': 'normal',
                     },
-                    'width': '90px'
-                }
-            ] +
-            [
-                {
-                    'if': {
-                        'column_id': 'City',
+                    style_table={
+                        'height': '300px',
+                        'overflowX': 'scroll',
+                        'border': 'thin lightgrey solid',
+                        'backgroundColor': '#EDECDE'
                     },
-                    'width': '120px'
-                }
-            ],
-            style_header={
-                'backgroundColor': '#F8F7F4'
-            },
-            filtering=True,
+                    n_fixed_rows=1,
+                    style_as_list_view=True,
+                    style_cell_conditional = [
+                        {
+                            'if': {'column_id': i},
+                            'textAlign': 'left'
+                        } for i in ['Date', 'amount', 'Place']
+                    ] + 
+                    [
+                        {
+                            'if': {
+                                    'column_id': 'amount',
+                                },
+                            'backgroundColor': '#EF5939',
+                            'width': '80px'
+                        }
+                    ] +
+                    [
+                        {
+                            'if': {
+                                'column_id': 'Date',
+                            },
+                            'width': '90px'
+                        }
+                    ] +
+                    [
+                        {
+                            'if': {
+                                'column_id': 'City',
+                            },
+                            'width': '120px'
+                        }
+                    ],
+                    style_header={
+                        'backgroundColor': '#F8F7F4'
+                    },
+                    filtering=True,
 
-        ),
-        className="row",
+                ),
+            ),
+            html.Div(
+                dcc.Graph(figure=px.box(tmp, x="amount", y="Weekday", orientation="h", notched=True,
+                                    category_orders={"Weekday": ["Friday", "Saturday", "Sunday", "Monday", "Tuesday", 
+                                        "Wednesday", "Thursday"]}))
+            ),
+            html.Div(
+                dcc.Graph(figure=px.area(tmp, x="Date", y="amount", color="Category"))
+            )
+        ],
+        className="two column",
         style={
-            'width': '50%',
+            'width': '100%',
         },
     ),
 ]
@@ -285,7 +314,7 @@ def close_modal_callback(n, n2):
 # add new transaction
 @app.callback(
     Output('trans-df', 'data'),
-    [Input('add-new-btn', 'n_clicks')],
+    [Input('submit-btn', 'n_clicks')],
     [
         State('category', 'value'),
         State('place', 'value'),
@@ -295,6 +324,7 @@ def close_modal_callback(n, n2):
     ]
 )
 def update_df(n_clicks, category, place, date, amount, city):
+    print("button cliked")
     if n_clicks == 0: 
         df = pd.read_csv('transactions.csv')
         return df.to_dict('records')

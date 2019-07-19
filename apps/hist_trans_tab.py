@@ -39,9 +39,29 @@ bar10 = go.Bar(x=tmp.Year, y=tmp.SURREY, name='Surrey')
 bar11 = go.Bar(x=tmp.Year, y=tmp.Unknown, name='Unkown')
 
 bar_graph_data = [bar1, bar2, bar3, bar4, bar5, bar6, bar7, bar8, bar9, bar10, bar11]
-layout = go.Layout(
+city_bar_layout = go.Layout(
     barmode='group'
 ) 
+
+# make a density plot for the yearly data
+tmp = pd.DataFrame(df.groupby('Month')['amount'].sum())
+amt = tmp.amount.values
+months = df.Month.unique()
+d = {'Month': months, 'Amount': amt}
+tmp =  pd.DataFrame(d)
+
+amt_bar_data = [go.Bar(x=months, y=amt)]
+amt_bar_layout = go.Layout( 
+    {
+        'xaxis': {
+            'categoryorder': 'array',
+            'categoryarray': ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+        }
+    }
+)
+
+
+
 # page layout
 layout = html.Div(
     [
@@ -72,6 +92,7 @@ layout = html.Div(
                             } 
                         ],
                         data=df.to_dict('records'),
+                        sorting=True,
                         style_cell={
                             'minWidth': '0px',
                             'maxWidth': '100px',
@@ -123,16 +144,13 @@ layout = html.Div(
                         filtering=True,
 
                     ),
-                    className="two columns",
+                    className="one columns",
                     style={
-                        'width': '50%',
+                        'width': '100%',
                     },
                     
                     
 
-                ),
-                html.Div(
-                    html.H1('2nd Col 1st Row'),
                 ),
             ],
             className="row",
@@ -160,22 +178,39 @@ layout = html.Div(
         ),
         html.Div(
             [
-                dcc.Graph(
-                    id='barGraph',
-                    figure={
-                        "data": bar_graph_data,
-                        "layout": layout
-                    },
+                html.Div(
+                    dcc.Graph(
+                        id='barGraph',
+                        figure={
+                            "data": bar_graph_data,
+                            "layout": city_bar_layout
+                        },
+                    ),
+                ),
+                html.Div(
+                    dcc.Graph(
+                        id="amtBarGraph",
+                        figure={
+                            "data": amt_bar_data,
+                            "layout": amt_bar_layout
+                        },
+                    )
                 )
             ], 
             className="two columns",
             style={
-                'width': '50%',
+                'width': '100%'
             }
         ),
-        html.Div([
-            html.H1("2nd Col 2nd Row")
-        ])  
+        html.Div(
+            dcc.Graph(
+                id="amtBarGraph",
+                figure={
+                    "data": amt_bar_data,
+                    "layout": amt_bar_layout
+                },
+            )
+        ),  
 
     ],
     className="row"
