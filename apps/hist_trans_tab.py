@@ -40,9 +40,10 @@ bar11 = go.Bar(x=tmp.Year, y=tmp.Unknown, name='Unkown')
 
 bar_graph_data = [bar1, bar2, bar3, bar4, bar5, bar6, bar7, bar8, bar9, bar10, bar11]
 city_bar_layout = go.Layout(
-    barmode='group'
+    barmode='group',
+    plot_bgcolor='#323846'
 ) 
-
+ 
 # make a density plot for the yearly data
 tmp = pd.DataFrame(df.groupby('Month')['amount'].sum())
 amt = tmp.amount.values
@@ -52,12 +53,11 @@ tmp =  pd.DataFrame(d)
 
 amt_bar_data = [go.Bar(x=months, y=amt)]
 amt_bar_layout = go.Layout( 
-    {
-        'xaxis': {
+    xaxis={
             'categoryorder': 'array',
             'categoryarray': ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-        }
-    }
+        },
+    plot_bgcolor='#323846'
 )
 
 
@@ -103,14 +103,15 @@ layout = html.Div(
                             'overflowY': 'scroll',
                             'overflowX': 'scroll',
                             'border': 'thin lightgrey solid',
-                            'backgroundColor': '#EDECDE'
+                            'backgroundColor': '#E8DDCD'
                         },
                         n_fixed_rows=1,
                         style_as_list_view=True,
                         style_cell_conditional = [
                             {
                                 'if': {'column_id': i},
-                                'textAlign': 'left'
+                                'textAlign': 'left',
+                                'backgroundColor': '#E8DDCD'
                             } for i in ['Date', 'amount', 'Place']
                         ] + 
                         [
@@ -127,7 +128,8 @@ layout = html.Div(
                                 'if': {
                                     'column_id': 'Date',
                                 },
-                                'width': '90px'
+                                'width': '90px',
+                                'backgroundColor': '#E8DDCD'
                             }
                         ] +
                         [
@@ -135,7 +137,8 @@ layout = html.Div(
                                 'if': {
                                     'column_id': 'City',
                                 },
-                                'width': '90px'
+                                'width': '90px',
+                                'backgroundColor': '#E8DDCD'
                             }
                         ],
                         style_header={
@@ -147,6 +150,7 @@ layout = html.Div(
                     className="one columns",
                     style={
                         'width': '100%',
+                        'backgroundColor': '#E8DDCD'
                     },
                     
                     
@@ -199,19 +203,9 @@ layout = html.Div(
             ], 
             className="two columns",
             style={
-                'width': '100%'
+                'width': '100%',
             }
-        ),
-        html.Div(
-            dcc.Graph(
-                id="amtBarGraph",
-                figure={
-                    "data": amt_bar_data,
-                    "layout": amt_bar_layout
-                },
-            )
-        ),  
-
+        ), 
     ],
     className="row"
 )

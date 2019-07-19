@@ -32,11 +32,14 @@ app.layout = html.Div([
             dcc.Tab(
                 label = 'Budget Manager',
                 value = 'budget_manager'
-            )
-        ]
+            ),
+        ],
     ),
     html.Div(id='page-content')
-])
+],
+style={
+    'backgroundColor': '#FCF7EF'
+})
 
 @app.callback(
     Output('page-content', 'children'),

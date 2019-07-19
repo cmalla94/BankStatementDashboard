@@ -292,6 +292,7 @@ layout = [
         className="two column",
         style={
             'width': '100%',
+            'backgroundColor': 'blue'
         },
     ),
 ]
@@ -324,7 +325,7 @@ def close_modal_callback(n, n2):
     ]
 )
 def update_df(n_clicks, category, place, date, amount, city):
-    print("button cliked")
+    # print("button cliked")
     if n_clicks == 0: 
         df = pd.read_csv('transactions.csv')
         return df.to_dict('records')
